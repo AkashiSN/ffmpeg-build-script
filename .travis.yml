@@ -1,4 +1,4 @@
-language: c
+language: minimal
 
 os:
   - linux
@@ -7,8 +7,7 @@ os:
 dist: focal
 osx_image: xcode12.2
 
-services:
-- docker
+services: docker
 
 jobs:
   include:
@@ -25,11 +24,10 @@ jobs:
       after_script:
         - ./build-ffmpeg --cleanup
 
-  exclude:
     - name: build in docker
-      os: osx
+      os: linux
       script: docker build -t ffmpeg:ubuntu -f Dockerfile .
 
     - name: build in docker with cuda
-      os: osx
+      os: linux
       script: docker build -t ffmpeg:cuda -f cuda-ubuntu.dockerfile .
