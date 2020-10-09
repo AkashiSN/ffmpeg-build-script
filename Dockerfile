@@ -16,7 +16,7 @@ RUN cp /app/workspace/bin/ffprobe /usr/bin/ffprobe
 RUN /app/build-ffmpeg --cleanup
 
 
-FROM nvidia/cuda:11.1-runtime-ubuntu20.04 AS build
+FROM nvidia/cuda:11.1-runtime-ubuntu20.04
 
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility,video
 
