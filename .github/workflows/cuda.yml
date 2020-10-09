@@ -1,4 +1,4 @@
-name: Docker build
+name: Docker build with cuda
 
 on:
   push:
@@ -17,5 +17,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Build image
-        run: docker build -f Dockerfile .
+      - name: Build cuda image
+        run: docker build -f cuda-ubuntu.dockerfile .
