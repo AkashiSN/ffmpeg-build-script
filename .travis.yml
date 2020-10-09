@@ -7,36 +7,26 @@ os:
 dist: focal
 osx_image: xcode12.2
 
+services:
+- docker
+
 jobs:
   include:
-    - name: native build
-      before_install:
-        - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update -qq; fi
-        - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -qq build-essential curl; fi
+    - before_install:
+      - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update -qq; fi
+      - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -qq build-essential curl; fi
 
-      script:
-        - while sleep 300; do echo "=====[ $SECONDS seconds still running ]====="; done &
-        - SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build
-        - kill %1
+    - script:
+      - while sleep 300; do echo "=====[ $SECONDS seconds still running ]====="; done &
+      - SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build
+      - kill %1
+      name: native build
 
-      after_script:
-        - ./build-ffmpeg --cleanup
+    - after_script:
+      - ./build-ffmpeg --cleanup
 
-  exclude:
-    - name: build in docker
-      services:
-      - docker
-      os: linux
-      before_install:
-        - docker build -t ffmpeg:ubuntu -f Dockerfile .
-      script:
-        - docker run --rm ffmpeg:ubuntu
+    - script: if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker build -t ffmpeg:ubuntu -f Dockerfile .; fi
+      name: build in docker
 
-    - name: build in docker with cuda
-      services:
-      - docker
-      os: linux
-      before_install:
-        - docker build -t ffmpeg:cuda -f cuda-ubuntu.dockerfile .
-      script:
-        - docker run --rm ffmpeg:cuda
+    - script: if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker build -t ffmpeg:ubuntu -f Dockerfile .; fi
+      name: build in docker with cuda
