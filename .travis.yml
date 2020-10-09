@@ -13,28 +13,27 @@ services:
   - docker
 
 jobs:
-  include:
-    - name: build on linux
-      before_install:
-        - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update -qq; fi
-        - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -qq build-essential curl; fi
+  - name: build on linux
+    before_install:
+      - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update -qq; fi
+      - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -qq build-essential curl; fi
 
-      script:
-        - while sleep 300; do echo "=====[ $SECONDS seconds still running ]====="; done &
-        - SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build
-        - kill %1
+    script:
+      - while sleep 300; do echo "=====[ $SECONDS seconds still running ]====="; done &
+      - SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build
+      - kill %1
 
-      after_script:
-        - ./build-ffmpeg --cleanup
+    after_script:
+      - ./build-ffmpeg --cleanup
 
-    - name: build in docker
-      before_install:
-        - docker build -t ffmpeg:ubuntu -f Dockerfile .
-      script:
-        - docker run --rm ffmpeg:ubuntu
+  - name: build in docker
+    before_install:
+      - docker build -t ffmpeg:ubuntu -f Dockerfile .
+    script:
+      - docker run --rm ffmpeg:ubuntu
 
-    - name: build in docker with cuda
-      before_install:
-        - docker build -t ffmpeg:cuda -f cuda-ubuntu.dockerfile .
-      script:
-        - docker run --rm ffmpeg:cuda
+  - name: build in docker with cuda
+    before_install:
+      - docker build -t ffmpeg:cuda -f cuda-ubuntu.dockerfile .
+    script:
+      - docker run --rm ffmpeg:cuda
