@@ -10,7 +10,7 @@ RUN apt-get update \
 WORKDIR /app
 COPY ./build-ffmpeg /app/build-ffmpeg
 
-RUN AUTOINSTALL=yes /app/build-ffmpeg --build
+RUN SKIPINSTALL=yes /app/build-ffmpeg --build
 
 FROM nvidia/cuda:11.1-runtime-ubuntu20.04
 
