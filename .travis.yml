@@ -9,23 +9,23 @@ matrix:
     - os: osx
       osx_image: xcode12.2
 
-- name: native build
-  before_install:
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update -qq; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -qq build-essential curl; fi
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update -qq; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -qq build-essential curl; fi
 
-  script:
+- script:
     - while sleep 300; do echo "=====[ $SECONDS seconds still running ]====="; done &
     - SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build
     - kill %1
-
+    - ./build-ffmpeg --cleanup
+  name: native build
   after_script:
     - ./build-ffmpeg --cleanup
 
-- name: build in docker
+- script: docker build -t ffmpeg:ubuntu -f Dockerfile .
   if: os = linux
-  script: docker build -t ffmpeg:ubuntu -f Dockerfile .
+  name: build in docker
 
-- name: build in docker with cuda
+- script: docker build -t ffmpeg:cuda -f cuda-ubuntu.dockerfile .
   if: os = linux
-  script: docker build -t ffmpeg:cuda -f cuda-ubuntu.dockerfile .
+  name: build in docker with cuda
