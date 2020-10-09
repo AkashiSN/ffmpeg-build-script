@@ -1,9 +1,5 @@
 language: minimal
 
-os:
-  - linux
-  - osx
-
 dist: focal
 osx_image: xcode12.2
 
@@ -12,6 +8,9 @@ services: docker
 jobs:
   include:
     - name: native build
+      os:
+      - linux
+      - osx
       before_install:
         - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update -qq; fi
         - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -qq build-essential curl; fi
