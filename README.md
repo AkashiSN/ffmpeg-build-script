@@ -1,5 +1,4 @@
 [![Build Status](https://travis-ci.org/markus-perl/ffmpeg-build-script.svg?branch=master)](https://travis-ci.org/markus-perl/ffmpeg-build-script)
-![Docker build with cuda](https://github.com/AkashiSN/ffmpeg-build-script/workflows/Docker%20build%20with%20cuda/badge.svg)
 
 ![FFmpeg build script](https://raw.github.com/markus-perl/ffmpeg-build-script/master/ffmpeg-build-script.png)
 
