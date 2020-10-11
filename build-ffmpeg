@@ -2,15 +2,13 @@
 
 # https://github.com/markus-perl/ffmpeg-build-script
 
-VERSION=1.16
+VERSION=1.17
 CWD=$(pwd)
 PACKAGES="$CWD/packages"
 WORKSPACE="$CWD/workspace"
-CC=clang
 CFLAGS="-I$WORKSPACE/include"
 LDFLAGS="-L$WORKSPACE/lib"
 EXTRALIBS="-lpthread -lm"
-FFMPEG_OPTS=()
 CONFIGURE_OPTIONS=()
 
 # Speed up the process
