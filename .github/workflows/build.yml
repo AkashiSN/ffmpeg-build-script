@@ -45,19 +45,21 @@ jobs:
   build-docker:
     name: build in docker
     runs-on: ubuntu-20.04
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: build ffmpeg
-      run: |
-        docker build -t ffmpeg:ubuntu -f Dockerfile .
-        docker run --rm ffmpeg:ubuntu
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: build ffmpeg
+        run: |
+          docker build -t ffmpeg:ubuntu -f Dockerfile .
+          docker run --rm ffmpeg:ubuntu
 
- build-cuda-docker:
+  build-cuda-docker:
     name: build in docker with cuda
     runs-on: ubuntu-20.04
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: build ffmpeg
-      run: |
-        docker build -t ffmpeg:cuda -f cuda-ubuntu.dockerfile .
-        docker run --rm ffmpeg:cuda
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: build ffmpeg
+        run: |
+          docker build -t ffmpeg:cuda -f cuda-ubuntu.dockerfile .
+          docker run --rm ffmpeg:cuda
