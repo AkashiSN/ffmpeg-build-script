@@ -27,13 +27,13 @@ jobs:
 
   build-macos:
     name: native build in macos
-      runs-on: macos-10.15
-      steps:
-        - name: build ffmpeg
-          run: |
-            while sleep 300; do echo "=====[ $SECONDS seconds still running ]====="; done &
-            SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build
-            kill %1
-        - name: clean up
-          run: |
-            ./build-ffmpeg --cleanup
+    runs-on: macos-10.15
+    steps:
+      - name: build ffmpeg
+        run: |
+          while sleep 300; do echo "=====[ $SECONDS seconds still running ]====="; done &
+          SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build
+          kill %1
+      - name: clean up
+        run: |
+          ./build-ffmpeg --cleanup
