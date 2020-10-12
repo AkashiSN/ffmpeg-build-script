@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/markus-perl/ffmpeg-build-script.svg?branch=master)](https://travis-ci.org/markus-perl/ffmpeg-build-script)
+[![build test](https://github.com/markus-perl/ffmpeg-build-script/workflows/build%20test/badge.svg?branch=master)](https://github.com/markus-perl/ffmpeg-build-script/actions)
 
 ![FFmpeg build script](https://raw.github.com/markus-perl/ffmpeg-build-script/master/ffmpeg-build-script.png)
 
@@ -44,11 +44,11 @@ because I don't have the resources and the time to maintain other systems.
         * VP8 `vp8_cuvid`
         * VP9 `vp9_cuvid`
     * Encoders
-        * H264 `nvenc nvenc_h264`
+        * H264 `nvenc_h264`
         * H265 `nvenc_hevc`
 
 ## Continuos Integration
-ffmpeg-build-script is rockstable. Every commit runs against Linux and MacOS with https://travis-ci.org just to make sure everything works as expected.
+ffmpeg-build-script is rockstable. Every commit runs against Linux and MacOS with https://github.com/markus-perl/ffmpeg-build-script/actions just to make sure everything works as expected.
 
 Requirements MacOS
 ------------
@@ -95,7 +95,7 @@ docker run ffmpeg -i https://files.coconut.co.s3.amazonaws.com/test.mp4 -f webm 
 git clone https://github.com/markus-perl/ffmpeg-build-script.git
 cd ffmpeg-build-script
 docker build --tag=ffmpeg-cuda -f cuda-ubuntu.dockerfile .
-docker run ffmpeg-cuda -i https://files.coconut.co.s3.amazonaws.com/test.mp4 -f webm -c:v libvpx -c:a libvorbis - > /tmp/test.mp4
+docker run --gpus all ffmpeg-cuda -hwaccel cuvid -c:v h264_cuvid -i https://files.coconut.co.s3.amazonaws.com/test.mp4 -c:v hevc_nvenc -vf scale_npp=-1:1080 - > /tmp/test.mp4
 ```
 
 ### Common installation
