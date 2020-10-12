@@ -6,7 +6,7 @@
 build-ffmpeg
 ==========
 
-The FFmpeg build script provides an easy way to build a static FFmpeg on **OSX** and **Linux** with **non-free codecs** included.
+The FFmpeg build script provides an easy way to build a static FFmpeg on **OSX**, **Windows** **(BETA)** and **Linux** with **non-free codecs** included.
 
 
 [![How-To build FFmpeg on MacOS](https://img.youtube.com/vi/Z9p3mM757cM/0.jpg)](https://www.youtube.com/watch?v=Z9p3mM757cM "How-To build FFmpeg on OSX")
@@ -54,6 +54,15 @@ Requirements MacOS
 ------------
 
 * XCode 10.x or greater
+
+Requirements Windows **(BETA)**
+------------
+
+* MSYS2 [https://www.msys2.org/](https://www.msys2.org/)
+```
+pacman -S base-devel compression
+pacman -S mingw-w64-x86_64-cmake mingw-w64-x86_64-toolchain
+```
 
 Requirements Linux
 ------------
