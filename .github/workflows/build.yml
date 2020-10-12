@@ -71,7 +71,7 @@ jobs:
 
       - name: add path
         run: |
-          echo "C:\msys64\mingw64\bin;C:\msys64\usr\local\bin;C:\msys64\usr\bin;C:\msys64\bin;" >> $GITHUB_PATH
+          echo "C:\msys64\mingw64\bin;C:\msys64\usr\local\bin;C:\msys64\usr\bin;C:\msys64\bin;" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       - name: Install requirements
         run: |
