@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # https://github.com/markus-perl/ffmpeg-build-script
 
@@ -14,7 +14,7 @@ CMAKE_ADDITIONAL_OPTIONS=()
 
 if [[ "${OSTYPE}" == "msys" ]]; then
 	CMAKE_ADDITIONAL_OPTIONS+=("-GMinGW Makefiles")
-	EXTRALIBS+=" -static"
+	EXTRALIBS+=" -static -lssp"
 fi
 
 
@@ -82,14 +82,16 @@ download () {
 
 	TARGETDIR=`tar -tf "${DOWNLOAD_PATH}/$2" | sed -n '1p'`
 	if [ "${TARGETDIR}" != "" -a -e "${DOWNLOAD_PATH}/${TARGETDIR}" ]; then
-		echo "Clean ${TARGETDIR}"
 		rm -rf "${DOWNLOAD_PATH}/${TARGETDIR}"
+		echo "Clean ${TARGETDIR}"
 	fi
 
 	if ! tar -xvf "${DOWNLOAD_PATH}/$2" -C "${DOWNLOAD_PATH}" 2>/dev/null >/dev/null; then
 		echo "Failed to extract $2";
 		exit 1
 	fi
+		echo "Extracting $2";
+
 
 }
 
@@ -276,6 +278,10 @@ if build "xvidcore"; then
 
 	if [[ -f "${WORKSPACE}/lib/libxvidcore.so" ]]; then
 		execute rm "${WORKSPACE}/lib/libxvidcore.so"*
+	fi
+
+	if [[ -f "${WORKSPACE}/lib/xvidcore.a" ]]; then
+		execute mv "${WORKSPACE}/lib/xvidcore.a" "${WORKSPACE}/lib/libxvidcore.a"
 	fi
 
 	build_done "xvidcore"

@@ -73,14 +73,9 @@ jobs:
         run: |
           echo "C:\msys64\mingw64\bin;C:\msys64\usr\local\bin;C:\msys64\usr\bin;C:\msys64\bin;" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-      - name: Install requirements
-        run: |
-          pacman -S --noconfirm --needed --noprogressbar base-devel compression
-          pacman -S --noconfirm --needed --noprogressbar mingw-w64-x86_64-cmake mingw-w64-x86_64-toolchain
-
       - name: build ffmpeg
         run: |
-          bash export SKIPINSTALL=yes; export VERBOSE=yes; ./build-ffmpeg --build
+          bash -c "export SKIPINSTALL=yes; export VERBOSE=yes; ./build-ffmpeg --build"
 
       - name: check shared library
         run: |
