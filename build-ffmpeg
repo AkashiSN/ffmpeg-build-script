@@ -69,13 +69,21 @@ download () {
 		fi
 
 		echo "... Done"
-
-		if ! tar -xvf "$DOWNLOAD_PATH/$2" -C "$DOWNLOAD_PATH" 2>/dev/null >/dev/null; then
-			echo "Failed to extract $2";
-			exit 1
-		fi
-
+	else
+		echo "$2 already downloaded."
 	fi
+
+	TARGETDIR=`tar -tf "$DOWNLOAD_PATH/$2" | sed -n '1p'`
+	if [ $TARGETDIR != "" -a -e "$DOWNLOAD_PATH/$TARGETDIR" ]; then
+		echo "Clean $TARGETDIR"
+		rm -rf "$DOWNLOAD_PATH/$TARGETDIR"
+	fi
+
+	if ! tar -xvf "$DOWNLOAD_PATH/$2" -C "$DOWNLOAD_PATH" 2>/dev/null >/dev/null; then
+		echo "Failed to extract $2";
+		exit 1
+	fi
+
 }
 
 execute () {
@@ -215,6 +223,12 @@ fi
 if build "lame"; then
 	download "https://netcologne.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz" "lame-3.100.tar.gz"
 	cd "$PACKAGES"/lame-3.100 || exit
+
+	if [[ "$OSTYPE" == "msys"* ]]; then
+		echo "Applying Windows patch"
+		patch -u -p1 < ../../windows-patches/lame-3.100.patch
+	fi
+
 	execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
@@ -226,7 +240,13 @@ fi
 if build "opus"; then
 	download "https://archive.mozilla.org/pub/opus/opus-1.3.1.tar.gz" "opus-1.3.1.tar.gz"
 	cd "$PACKAGES"/opus-1.3.1 || exit
-	execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
+
+	OPUS_WIN_OPTIONS=()
+	if [[ "$OSTYPE" == "msys"* ]]; then
+		OPUS_WIN_OPTIONS=("--disable-stack-protector" "--disable-extra-programs")
+	fi
+
+	execute ./configure --prefix="${WORKSPACE}" --enable-static --disable-shared --disable-doc "${OPUS_WIN_OPTIONS[@]}"
 	execute make -j $MJOBS
 	execute make install
 

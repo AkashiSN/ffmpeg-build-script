@@ -1,0 +1,99 @@
+diff -u -r lame-3.100/configure.in lame-3.100-new/configure.in
+--- lame-3.100/configure.in	2017-08-16 00:16:31.000000000 +0900
++++ lame-3.100-new/configure.in	2020-10-11 20:57:03.253077100 +0900
+@@ -421,6 +421,7 @@
+ AC_CHECK_LIB(termcap, initscr, HAVE_TERMCAP="termcap")
+ AC_CHECK_LIB(curses, initscr, HAVE_TERMCAP="curses")
+ AC_CHECK_LIB(ncurses, initscr, HAVE_TERMCAP="ncurses")
++AC_CHECK_HEADERS(langinfo.h, AC_CHECK_FUNCS(nl_langinfo))
+ 
+ AM_ICONV
+ 
+diff -u -r lame-3.100/frontend/parse.c lame-3.100-new/frontend/parse.c
+--- lame-3.100/frontend/parse.c	2017-10-11 04:08:39.000000000 +0900
++++ lame-3.100-new/frontend/parse.c	2020-10-11 20:55:58.013879000 +0900
+@@ -70,9 +70,11 @@
+ #ifdef HAVE_ICONV
+ #include <iconv.h>
+ #include <errno.h>
++#ifdef HAVE_LANGINFO_H
+ #include <locale.h>
+ #include <langinfo.h>
+ #endif
++#endif
+ 
+ #if defined _ALLOW_INTERNAL_OPTIONS
+ #define INTERNAL_OPTS 1
+@@ -146,6 +148,18 @@
+     return n;
+ }
+ 
++static char*
++currentCharacterEncoding()
++{
++#ifdef HAVE_LANGINFO_H
++    char* cur_code = nl_langinfo(CODESET);
++#else
++    char* env_lang = getenv("LANG");
++    char* xxx_code = env_lang == NULL ? NULL : strrchr(env_lang, '.');
++    char* cur_code = xxx_code == NULL ? "" : xxx_code+1;
++#endif
++    return cur_code;
++}
+ 
+ static size_t
+ currCharCodeSize(void)
+@@ -153,7 +167,7 @@
+     size_t n = 1;
+     char dst[32];
+     char* src = "A";
+-    char* cur_code = nl_langinfo(CODESET);
++    char* cur_code = currentCharacterEncoding();
+     iconv_t xiconv = iconv_open(cur_code, "ISO_8859-1");
+     if (xiconv != (iconv_t)-1) {
+         for (n = 0; n < 32; ++n) {
+@@ -181,7 +195,7 @@
+         size_t const n = l*4;
+         dst = calloc(n+4, 4);
+         if (dst != 0) {
+-            char* cur_code = nl_langinfo(CODESET);
++            char* cur_code = currentCharacterEncoding();
+             iconv_t xiconv = iconv_open(cur_code, "ISO_8859-1");
+             if (xiconv != (iconv_t)-1) {
+                 char* i_ptr = src;
+@@ -205,7 +219,7 @@
+         size_t const n = l*4;
+         dst = calloc(n+4, 4);
+         if (dst != 0) {
+-            char* cur_code = nl_langinfo(CODESET);
++            char* cur_code = currentCharacterEncoding();
+             iconv_t xiconv = iconv_open(cur_code, "UTF-16LE");
+             if (xiconv != (iconv_t)-1) {
+                 char* i_ptr = (char*)src;
+@@ -231,7 +245,7 @@
+         size_t const n = l*4;
+         dst = calloc(n+4, 4);
+         if (dst != 0) {
+-            char* cur_code = nl_langinfo(CODESET);
++            char* cur_code = currentCharacterEncoding();
+             iconv_t xiconv = iconv_open("ISO_8859-1//TRANSLIT", cur_code);
+             if (xiconv != (iconv_t)-1) {
+                 char* i_ptr = (char*)src;
+@@ -257,7 +271,7 @@
+         size_t const n = (l+1)*4;
+         dst = calloc(n+4, 4);
+         if (dst != 0) {
+-            char* cur_code = nl_langinfo(CODESET);
++            char* cur_code = currentCharacterEncoding();
+             iconv_t xiconv = iconv_open("UTF-16LE//TRANSLIT", cur_code);
+             dst[0] = 0xff;
+             dst[1] = 0xfe;
+@@ -1513,7 +1527,7 @@
+     enum TextEncoding id3_tenc = TENC_LATIN1;
+ #endif
+ 
+-#ifdef HAVE_ICONV
++#ifdef HAVE_LANGINFO_H
+     setlocale(LC_CTYPE, "");
+ #endif
+     inPath[0] = '\0';
