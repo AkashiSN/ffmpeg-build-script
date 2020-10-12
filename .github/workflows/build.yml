@@ -21,6 +21,15 @@ jobs:
           SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build
           kill %1
 
+      - name: check shared library
+        run: |
+          ldd ./workspace/bin/ffmpeg
+          ldd ./workspace/bin/ffprobe
+
+      - name: test run ffmepg
+        run: |
+          ./workspace/bin/ffmpeg --help
+
       - name: clean up
         run: |
           ./build-ffmpeg --cleanup
@@ -37,6 +46,52 @@ jobs:
           while sleep 300; do echo "=====[ $SECONDS seconds still running ]====="; done &
           SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build
           kill %1
+
+      - name: check shared library
+        run: |
+          otool -L ./workspace/bin/ffmpeg
+          otool -L ./workspace/bin/ffprobe
+
+      - name: test run ffmepg
+        run: |
+          ./workspace/bin/ffmpeg --help
+
+      - name: clean up
+        run: |
+          ./build-ffmpeg --cleanup
+
+  build-windows:
+    name: native build in windows
+    runs-on: windows-2019
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: use bash enviroment
+        run: |
+          set PATH=C:\msys64\mingw64\bin;C:\msys64\usr\local\bin;C:\msys64\usr\bin;C:\msys64\bin;%PATH%
+          set MSYSTEM=MINGW64
+          bash
+
+      - name: Install requirements
+        run: |
+          pacman -S --noconfirm --needed --noprogressbar base-devel compression
+          pacman -S --noconfirm --needed --noprogressbar mingw-w64-x86_64-cmake mingw-w64-x86_64-toolchain
+
+      - name: build ffmpeg
+        run: |
+          while sleep 300; do echo "=====[ $SECONDS seconds still running ]====="; done &
+          SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build
+          kill %1
+
+      - name: check shared library
+        run: |
+          ldd ./workspace/bin/ffmpeg
+          ldd ./workspace/bin/ffprobe
+
+      - name: test run ffmepg
+        run: |
+          ./workspace/bin/ffmpeg --help
 
       - name: clean up
         run: |
