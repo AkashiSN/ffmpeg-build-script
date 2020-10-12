@@ -71,7 +71,7 @@ jobs:
 
       - name: add path
         run: |
-          echo "::add-path::C:\msys64\mingw64\bin;C:\msys64\usr\local\bin;C:\msys64\usr\bin;C:\msys64\bin;"
+          echo "C:\msys64\mingw64\bin;C:\msys64\usr\local\bin;C:\msys64\usr\bin;C:\msys64\bin;" >> $GITHUB_PATH
 
       - name: Install requirements
         run: |
@@ -80,7 +80,7 @@ jobs:
 
       - name: build ffmpeg
         run: |
-          bash SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build
+          bash export SKIPINSTALL=yes; export VERBOSE=yes; ./build-ffmpeg --build
 
       - name: check shared library
         run: |
