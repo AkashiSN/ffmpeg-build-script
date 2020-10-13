@@ -24,11 +24,10 @@ jobs:
       - name: check shared library
         run: |
           ldd ./workspace/bin/ffmpeg
-          ldd ./workspace/bin/ffprobe
 
       - name: test run ffmepg
         run: |
-          ./workspace/bin/ffmpeg --help
+          ./workspace/bin/ffmpeg -buildconf
 
       - name: clean up
         run: |
@@ -50,11 +49,10 @@ jobs:
       - name: check shared library
         run: |
           otool -L ./workspace/bin/ffmpeg
-          otool -L ./workspace/bin/ffprobe
 
       - name: test run ffmepg
         run: |
-          ./workspace/bin/ffmpeg --help
+          ./workspace/bin/ffmpeg -buildconf
 
       - name: clean up
         run: |
@@ -84,7 +82,7 @@ jobs:
 
       - name: test run ffmepg
         run: |
-          ./workspace/bin/ffmpeg --help
+          ./workspace/bin/ffmpeg -buildconf
 
       - name: clean up
         run: |
@@ -113,7 +111,7 @@ jobs:
 
       - name: test run ffmepg
         run: |
-          docker run --rm ffmpeg:ubuntu
+          docker run --rm ffmpeg:ubuntu -buildconf
 
   build-cuda-docker:
     name: build in docker with cuda
@@ -138,4 +136,4 @@ jobs:
 
       - name: test run ffmepg
         run: |
-          docker run --rm ffmpeg:cuda
+          docker run --rm ffmpeg:cuda -buildconf

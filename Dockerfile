@@ -16,7 +16,6 @@ COPY --from=build /app/workspace/bin/ffmpeg /usr/bin/ffmpeg
 COPY --from=build /app/workspace/bin/ffprobe /usr/bin/ffprobe
 
 RUN ldd /usr/bin/ffmpeg
-RUN ldd /usr/bin/ffprobe
 
 CMD         ["--help"]
 ENTRYPOINT  ["/usr/bin/ffmpeg"]

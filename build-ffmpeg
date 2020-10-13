@@ -4,21 +4,21 @@
 
 VERSION=1.17
 CWD=$(pwd)
+MAKE_TOOL="make"
 PACKAGES="$CWD/packages"
 WORKSPACE="$CWD/workspace"
 CFLAGS="-I$WORKSPACE/include"
 LDFLAGS="-L$WORKSPACE/lib"
-EXTRALIBS="-lm"
+EXTRALIBS="-static-libgcc -static-libstdc++"
 CONFIGURE_OPTIONS=()
 CMAKE_ADDITIONAL_OPTIONS=()
-MAKE_TOOL="make"
 
 if [[ "$OSTYPE" == "msys" ]]; then
 	CMAKE_ADDITIONAL_OPTIONS+=("-GMinGW Makefiles")
 	EXTRALIBS+=" -static -lssp"
-	MAKE_TOOL="$MAKE_TOOL"
+	MAKE_TOOL="mingw32-make"
 else
-	EXTRALIBS+=" -lpthread"
+	EXTRALIBS+=" -Wl,-Bdynamic,-lc,-ldl,-lpthread,-Bstatic,-lm,-lbz2,-llzma"
 fi
 
 
