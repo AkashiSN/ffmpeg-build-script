@@ -8,13 +8,15 @@ PACKAGES="$CWD/packages"
 WORKSPACE="$CWD/workspace"
 CFLAGS="-I$WORKSPACE/include"
 LDFLAGS="-L$WORKSPACE/lib"
-EXTRALIBS=""
+EXTRALIBS="-lm"
 CONFIGURE_OPTIONS=()
 CMAKE_ADDITIONAL_OPTIONS=()
+MAKE_TOOL="make"
 
 if [[ "$OSTYPE" == "msys" ]]; then
 	CMAKE_ADDITIONAL_OPTIONS+=("-GMinGW Makefiles")
 	EXTRALIBS+=" -static -lssp"
+	MAKE_TOOL="$MAKE_TOOL"
 else
 	EXTRALIBS+=" -lpthread"
 fi
@@ -189,8 +191,8 @@ if build "yasm"; then
 	download "https://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz" "yasm-1.3.0.tar.gz"
 	cd "$PACKAGES/yasm-1.3.0" || exit
 	execute ./configure --prefix="$WORKSPACE"
-	execute make -j $MJOBS
-	execute make install
+	execute $MAKE_TOOL -j $MJOBS
+	execute $MAKE_TOOL install
 	build_done "yasm"
 fi
 
@@ -198,8 +200,8 @@ if build "nasm"; then
 	download "https://www.nasm.us/pub/nasm/releasebuilds/2.14.02/nasm-2.14.02.tar.gz" "nasm.tar.gz"
 	cd "$PACKAGES/nasm-2.14.02"|| exit
 	execute ./configure --prefix="$WORKSPACE" --disable-shared --enable-static
-	execute make -j $MJOBS
-	execute make install
+	execute $MAKE_TOOL -j $MJOBS
+	execute $MAKE_TOOL install
 	build_done "nasm"
 fi
 
@@ -207,8 +209,8 @@ if build "opencore"; then
 	download "https://deac-riga.dl.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-0.1.5.tar.gz" "opencore-amr-0.1.5.tar.gz"
 	cd "$PACKAGES/opencore-amr-0.1.5" || exit
 	execute ./configure --prefix="$WORKSPACE" --disable-shared --enable-static
-	execute make -j $MJOBS
-	execute make install
+	execute $MAKE_TOOL -j $MJOBS
+	execute $MAKE_TOOL install
 
 	build_done "opencore"
 fi
@@ -225,8 +227,8 @@ if build "libvpx"; then
 	fi
 
 	execute ./configure --prefix="$WORKSPACE" --disable-unit-tests --disable-shared
-	execute make -j $MJOBS
-	execute make install
+	execute $MAKE_TOOL -j $MJOBS
+	execute $MAKE_TOOL install
 
 	build_done "libvpx"
 fi
@@ -242,8 +244,8 @@ if build "lame"; then
 	fi
 
 	execute ./configure --prefix="$WORKSPACE" --disable-shared --enable-static
-	execute make -j $MJOBS
-	execute make install
+	execute $MAKE_TOOL -j $MJOBS
+	execute $MAKE_TOOL install
 
 	build_done "lame"
 fi
@@ -259,8 +261,8 @@ if build "opus"; then
 	fi
 
 	execute ./configure --prefix="$WORKSPACE" --enable-static --disable-shared --disable-doc "${WIN_OPTIONS[@]}"
-	execute make -j $MJOBS
-	execute make install
+	execute $MAKE_TOOL -j $MJOBS
+	execute $MAKE_TOOL install
 
 	build_done "opus"
 fi
@@ -271,8 +273,8 @@ if build "xvidcore"; then
 	cd "$PACKAGES/xvidcore" || exit
 	cd build/generic  || exit
 	execute ./configure --prefix="$WORKSPACE" --disable-shared --enable-static
-	execute make -j $MJOBS
-	execute make install
+	execute $MAKE_TOOL -j $MJOBS
+	execute $MAKE_TOOL install
 
 	if [[ -f "$WORKSPACE/lib/libxvidcore.4.dylib" ]]; then
 		execute rm "$WORKSPACE/lib/libxvidcore.4.dylib"
@@ -284,6 +286,7 @@ if build "xvidcore"; then
 
 	if [[ -f "$WORKSPACE/lib/xvidcore.a" ]]; then
 		execute mv "$WORKSPACE/lib/xvidcore.a" "$WORKSPACE/lib/libxvidcore.a"
+		execute rm "$WORKSPACE/lib/xvidcore.dll.a"
 	fi
 
 	build_done "xvidcore"
@@ -300,9 +303,9 @@ if build "x264"; then
 		execute ./configure --prefix="$WORKSPACE" --enable-static --enable-pic
 	fi
 
-	execute make -j $MJOBS
-	execute make install
-	execute make install-lib-static
+	execute $MAKE_TOOL -j $MJOBS
+	execute $MAKE_TOOL install
+	execute $MAKE_TOOL install-lib-static
 
 	build_done "x264"
 fi
@@ -312,8 +315,8 @@ if build "libogg"; then
 	download "https://ftp.osuosl.org/pub/xiph/releases/ogg/libogg-1.3.3.tar.gz" "libogg-1.3.3.tar.gz"
 	cd "$PACKAGES/libogg-1.3.3" || exit
 	execute ./configure --prefix="$WORKSPACE" --disable-shared --enable-static
-	execute make -j $MJOBS
-	execute make install
+	execute $MAKE_TOOL -j $MJOBS
+	execute $MAKE_TOOL install
 	build_done "libogg"
 fi
 
@@ -321,8 +324,8 @@ if build "libvorbis"; then
 	download "https://ftp.osuosl.org/pub/xiph/releases/vorbis/libvorbis-1.3.6.tar.gz" "libvorbis-1.3.6.tar.gz"
 	cd "$PACKAGES/libvorbis-1.3.6" || exit
 	execute ./configure --prefix="$WORKSPACE" --with-ogg-libraries="$WORKSPACE/lib" --with-ogg-includes="$WORKSPACE/include/" --enable-static --disable-shared --disable-oggtest
-	execute make -j $MJOBS
-	execute make install
+	execute $MAKE_TOOL -j $MJOBS
+	execute $MAKE_TOOL install
 
 	build_done "libvorbis"
 fi
@@ -335,8 +338,8 @@ if build "libtheora"; then
 	chmod +x configure.patched
 	mv configure.patched configure
 	execute ./configure --prefix="$WORKSPACE" --with-ogg-libraries="$WORKSPACE/lib" --with-ogg-includes="$WORKSPACE/include/" --with-vorbis-libraries="$WORKSPACE/lib" --with-vorbis-includes="$WORKSPACE/include/" --enable-static --disable-shared --disable-oggtest --disable-vorbistest --disable-examples --disable-asm --disable-spec
-	execute make -j $MJOBS
-	execute make install
+	execute $MAKE_TOOL -j $MJOBS
+	execute $MAKE_TOOL install
 
 	build_done "libtheora"
 fi
@@ -347,8 +350,8 @@ if [[ $OSTYPE != "msys" ]]; then
 		download "https://pkgconfig.freedesktop.org/releases/pkg-config-0.29.2.tar.gz" "pkg-config-0.29.2.tar.gz"
 		cd "$PACKAGES/pkg-config-0.29.2" || exit
 		execute ./configure --silent --prefix="$WORKSPACE" --with-pc-path="$WORKSPACE/lib/pkgconfig" --with-internal-glib
-		execute make -j $MJOBS
-		execute make install
+		execute $MAKE_TOOL -j $MJOBS
+		execute $MAKE_TOOL install
 		build_done "pkg-config"
 	fi
 
@@ -359,8 +362,8 @@ if [[ $OSTYPE != "msys" ]]; then
 		perl -p -i -e "s/get_filename_component.JNIPATH/#get_filename_component(JNIPATH/g" Tests/CMakeLists.txt
 		perl -p -i -e "s/get_filename_component.JNIPATH/#get_filename_component(JNIPATH/g" Tests/CMakeLists.txt
 		execute ./configure --prefix="$WORKSPACE"
-		execute make -j $MJOBS
-		execute make install
+		execute $MAKE_TOOL -j $MJOBS
+		execute $MAKE_TOOL install
 		build_done "cmake"
 	fi
 fi
@@ -369,14 +372,8 @@ if build "vid_stab"; then
 	download "https://github.com/georgmartius/vid.stab/archive/v1.1.0.tar.gz" "georgmartius-vid.stab-v1.1.0-0-g60d65da.tar.tgz"
 	cd "$PACKAGES/vid.stab-1.1.0" || exit
 	execute cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="$WORKSPACE" -DUSE_OMP=OFF -DENABLE_SHARED=off "${CMAKE_ADDITIONAL_OPTIONS[@]}" .
-
-	if [[ "$OSTYPE" == "msys" ]]; then
-		execute mingw32-make
-		execute mingw32-make install
-	else
-		execute make
-		execute make install
-	fi
+	execute $MAKE_TOOL
+	execute $MAKE_TOOL install
 
 	build_done "vid_stab"
 fi
@@ -387,14 +384,8 @@ if build "x265"; then
 	cd "$PACKAGES/x265-3.4" || exit
 	cd source || exit
 	execute cmake -DCMAKE_INSTALL_PREFIX="$WORKSPACE" -DENABLE_SHARED=off "${CMAKE_ADDITIONAL_OPTIONS[@]}" .
-
-	if [[ "$OSTYPE" == "msys" ]]; then
-		execute mingw32-make -j $MJOBS
-		execute mingw32-make install
-	else
-		execute make -j $MJOBS
-		execute make install
-	fi
+	execute $MAKE_TOOL -j $MJOBS
+	execute $MAKE_TOOL install
 
 	sed "s/-lx265/-lx265 -lstdc++/g" "$WORKSPACE/lib/pkgconfig/x265.pc" > "$WORKSPACE/lib/pkgconfig/x265.pc.tmp"
 	mv "$WORKSPACE/lib/pkgconfig/x265.pc.tmp" "$WORKSPACE/lib/pkgconfig/x265.pc"
@@ -407,8 +398,8 @@ if build "fdk_aac"; then
 	download "https://sourceforge.net/projects/opencore-amr/files/fdk-aac/fdk-aac-2.0.1.tar.gz/download?use_mirror=gigenet" "fdk-aac-2.0.1.tar.gz"
 	cd "$PACKAGES/fdk-aac-2.0.1" || exit
 	execute ./configure --prefix="$WORKSPACE" --disable-shared --enable-static
-	execute make -j $MJOBS
-	execute make install
+	execute $MAKE_TOOL -j $MJOBS
+	execute $MAKE_TOOL install
 
 	build_done "fdk_aac"
 fi
@@ -420,14 +411,8 @@ if build "av1"; then
 	mkdir -p "$PACKAGES/aom_build"
 	cd "$PACKAGES/aom_build" || exit
 	execute cmake -DENABLE_TESTS=0 -DCMAKE_INSTALL_PREFIX="$WORKSPACE" "${CMAKE_ADDITIONAL_OPTIONS[@]}" "$PACKAGES/av1"
-
-	if [[ "$OSTYPE" == "msys" ]]; then
-		execute mingw32-make -j $MJOBS
-		execute mingw32-make install
-	else
-		execute make -j $MJOBS
-		execute make install
-	fi
+	execute $MAKE_TOOL -j $MJOBS
+	execute $MAKE_TOOL install
 
 	build_done "av1"
 fi
@@ -441,12 +426,12 @@ if build "zlib"; then
 		sed -i "68i BINARY_PATH=\"$WORKSPACE/bin\"" win32/Makefile.gcc
 		sed -i "69i INCLUDE_PATH=\"$WORKSPACE/include\"" win32/Makefile.gcc
 		sed -i "70i LIBRARY_PATH=\"$WORKSPACE/lib\"" win32/Makefile.gcc
-		execute make -f win32/Makefile.gcc -j $MJOBS prefix="$WORKSPACE"
-		execute make -f win32/Makefile.gcc install
+		execute $MAKE_TOOL -f win32/Makefile.gcc -j $MJOBS prefix="$WORKSPACE"
+		execute $MAKE_TOOL -f win32/Makefile.gcc install
 	else
 		execute ./configure --static --prefix="$WORKSPACE"
-		execute make -j $MJOBS
-		execute make install
+		execute $MAKE_TOOL -j $MJOBS
+		execute $MAKE_TOOL install
 	fi
 
 	build_done "zlib"
@@ -456,8 +441,8 @@ if build "openssl"; then
 	download "https://www.openssl.org/source/openssl-1.1.1g.tar.gz" "openssl-1.1.1g.tar.gz"
 	cd "$PACKAGES/openssl-1.1.1g" || exit
 	execute ./config --prefix="$WORKSPACE" --openssldir="$WORKSPACE" --with-zlib-include="$WORKSPACE/include/" --with-zlib-lib="$WORKSPACE/lib" no-shared zlib
-	execute make -j $MJOBS
-	execute make install
+	execute $MAKE_TOOL -j $MJOBS
+	execute $MAKE_TOOL install
 
 	build_done "openssl"
 fi
@@ -470,12 +455,7 @@ if build "srt"; then
 	export OPENSSL_LIB_DIR="$WORKSPACE/lib"
 	export OPENSSL_INCLUDE_DIR="$WORKSPACE/include/"
 	execute cmake -DCMAKE_INSTALL_PREFIX="$WORKSPACE" -DENABLE_SHARED=off -DENABLE_STATIC=on -DENABLE_APPS=off "${CMAKE_ADDITIONAL_OPTIONS[@]}" "$PACKAGES/srt-1.4.1"
-
-	if [[ "$OSTYPE" == "msys" ]]; then
-		execute mingw32-make install
-	else
-		execute make install
-	fi
+	execute $MAKE_TOOL install
 
 	build_done "srt"
 fi
@@ -486,7 +466,7 @@ if command -v nvcc > /dev/null ; then
 		download "https://github.com/FFmpeg/nv-codec-headers/releases/download/n10.0.26.0/nv-codec-headers-10.0.26.0.tar.gz" "nv-codec-headers-10.0.26.0.tar.gz"
 		cd "$PACKAGES/nv-codec-headers-10.0.26.0" || exit
 		sed -i  "s#PREFIX = /usr/local#PREFIX = $WORKSPACE#g" "$PACKAGES/nv-codec-headers-10.0.26.0/Makefile"
-		execute make install
+		execute $MAKE_TOOL install
 		build_done "nv-codec"
 	fi
 	CFLAGS+=" -I/usr/local/cuda/include"
@@ -517,8 +497,8 @@ cd "$PACKAGES"/ffmpeg-4.3.1/ || exit
 	--pkg-config-flags="--static" \
 	--prefix="$WORKSPACE"
 
-execute make -j $MJOBS
-execute make install
+execute $MAKE_TOOL -j $MJOBS
+execute $MAKE_TOOL install
 
 INSTALL_FOLDER="/usr/bin"
 if [[ "$OSTYPE" == "darwin"* ]]; then
