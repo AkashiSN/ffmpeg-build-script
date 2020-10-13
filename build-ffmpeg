@@ -18,7 +18,7 @@ if [[ "$OSTYPE" == "msys" ]]; then
 	EXTRALIBS+=" -static -lssp"
 	MAKE_TOOL="mingw32-make"
 else
-	EXTRALIBS+=" -Wl,-Bdynamic,-lc,-ldl,-lpthread,-Bstatic,-lm,-lbz2,-llzma"
+	EXTRALIBS+=" -Wl,-Bdynamic,-lc,-ldl,-lpthread,-Bstatic,-lbz2,-llzma"
 fi
 
 
@@ -272,14 +272,7 @@ if build "xvidcore"; then
 	download "https://downloads.xvid.com/downloads/xvidcore-1.3.7.tar.gz" "xvidcore-1.3.7.tar.gz"
 	cd "$PACKAGES/xvidcore" || exit
 	cd build/generic  || exit
-
-	if [[ "$OSTYPE" == "msys" ]]; then
-		execute ./bootstrap.sh
-		execute ./configure --prefix="$WORKSPACE" --disable-shared --enable-static --disable-assembly
-	else
-		execute ./configure --prefix="$WORKSPACE" --disable-shared --enable-static
-	fi
-
+	execute ./configure --prefix="$WORKSPACE" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
 
