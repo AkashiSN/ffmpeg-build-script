@@ -76,7 +76,7 @@ jobs:
 
       - name: build ffmpeg
         run: |
-          SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build"
+          SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build
 
       - name: check shared library
         run: |
