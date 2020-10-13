@@ -275,9 +275,11 @@ if build "xvidcore"; then
 
 	if [[ "$OSTYPE" == "msys" ]]; then
 		execute ./bootstrap.sh
+		execute ./configure --prefix="$WORKSPACE" --disable-shared --enable-static --disable-assembly
+	else
+		execute ./configure --prefix="$WORKSPACE" --disable-shared --enable-static
 	fi
 
-	execute ./configure --prefix="$WORKSPACE" --disable-shared --enable-static
 	execute make -j $MJOBS
 	execute make install
 
